@@ -1,0 +1,34 @@
+FUNCIÓN greedy_deterministic(cobertura, costos):
+    # Paso 1: Ordenar comunas por heurística greedy (cobertura/costo)
+    comunas_ordenadas = ORDENAR(LLAVES(cobertura), 
+                               POR: -TAMAÑO(cobertura[comuna]) / costos[comuna])
+    
+    # Inicialización
+    comunas_seleccionadas = LISTA_VACÍA
+    comunas_cubiertas = CONJUNTO_VACÍO
+    costo_total = 0
+    
+    INICIAR_TEMPORIZADOR
+    
+    # Paso 2: Selección greedy iterativa
+    PARA CADA comuna EN comunas_ordenadas:
+        # Calcular cobertura nueva no cubierta
+        cobertura_nueva = CONJUNTO(cobertura[comuna]) - comunas_cubiertas
+        
+        SI cobertura_nueva NO ESTÁ VACÍO:
+            # Paso 3: Seleccionar comuna (decisión greedy)
+            AÑADIR comuna A comunas_seleccionadas
+            AÑADIR cobertura[comuna] A comunas_cubiertas
+            SUMAR costos[comuna] A costo_total
+    
+    DETENER_TEMPORIZADOR
+    tiempo_ejecucion = TIEMPO_TRANSCURRIDO
+    
+    # Paso 4: Validar solución completa
+    SI TAMAÑO(comunas_cubiertas) < TAMAÑO(cobertura):
+        RETORNAR NULO, INFINITO, tiempo_ejecucion  # Solución inválida
+    
+    # Paso 5: Retornar solución encontrada
+    RETORNAR comunas_seleccionadas, costo_total, tiempo_ejecucion
+
+    
