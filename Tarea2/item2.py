@@ -505,7 +505,6 @@ def grasp_algorithm(
 
             seed_gs = i_ws * (max_restarts_in_warm_start_hc + 101) + hc_restart_attempt
             
-            # Usar build_stochastic_greedy_solution (tu Item 1)
             initial_sched, initial_assign, _, feasible_gs = greedy_stochastic(
                 num_planes, E, P, L, Ci, Ck, tau, num_pist, rcl_size_stochastic_warm_start, seed_gs)
             if not feasible_gs or initial_sched is None or initial_assign is None: continue
@@ -529,8 +528,7 @@ def grasp_algorithm(
     if best_overall_cost != float('inf'): cost_history.append(best_overall_cost)
     print(f"[GRASP Warm Start] Mejor costo tras fase Warm Start: {best_overall_cost if best_overall_cost != float('inf') else 'inf':.2f}")
 
-    # Bucle Principal GRASP Clásico
-    print(f"\n[GRASP Clásico] Iniciando {max_grasp_iterations} iteraciones principales...")
+    print(f"\n[GRASP] Iniciando {max_grasp_iterations} iteraciones principales...")
     for iter_g in range(max_grasp_iterations):
 
         constructed_layout = grasp_construct(num_planes,num_pist,E,P,L,Ci,Ck,tau,alpha_rcl_grasp)
@@ -568,7 +566,6 @@ def grasp_algorithm(
     print(f"[GRASP Final] Mejor costo verificado: {best_overall_cost:.2f}")
     return best_overall_layout, best_overall_cost, cost_history
 
-# --- Print Solution (adaptada) ---
 def print_runway_solution(
     final_schedule: Optional[FinalSchedule], total_cost: float, is_feasible: bool,
     runway_layout: Optional[PistLayout] = None, num_pist: Optional[int] = None):
@@ -614,11 +611,9 @@ def print_runway_solution(
     for p_idx, l_time in sorted_final_sched: 
         print(f"{p_idx + 1}\t{l_time}")
 
-# --- Main ---
 def main():
     DEFAULT_CASE_DIR = "casos"
-    # ... (código de selección de caso y número de pistas - P_val es P_array) ...
-    # ... (exactamente como en tu item2.py, usando P donde antes era P) ...
+
     while True:
         select_str = input("Selecciona caso (1-4) o 0 salir: \n1. Case1 \n2. Case2 \n3. Case3 \n4. Case4 \n0. Salir\n")
         try: 
@@ -668,7 +663,7 @@ def main():
         MAX_ITER_GRASP = int(iter_grasp_str) if iter_grasp_str.isdigit() and int(iter_grasp_str) >0 else 20
 
         ALPHA_RCL_GRASP = 0.3
-        RCL_SIZE_GREEDY_ITEM1 = 3
+        RCL_SIZE_GREEDY = 3
         print(f"Config GRASP: WarmStarts={NUM_STOCH_WARM_STARTS}, MaxRestartsHC_WS={MAX_RESTARTS_HC_WARM_START}, GRASPIter={MAX_ITER_GRASP}, AlphaGRASP={ALPHA_RCL_GRASP}")
 
         plot_labels, plot_costs, plot_times, conv_hist_fi, conv_hist_bi = [], [], [], [], []
@@ -677,7 +672,7 @@ def main():
         start_fi = time.time()
         layout_fi, cost_fi, conv_hist_fi = grasp_algorithm(
             num_planes,num_pists,E,P_array,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,False,
-            NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY_ITEM1, MAX_RESTARTS_HC_WARM_START)
+            NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY, MAX_RESTARTS_HC_WARM_START)
         
 
         time_fi = time.time() - start_fi
@@ -700,7 +695,7 @@ def main():
         start_bi = time.time()
         layout_bi, cost_bi, conv_hist_bi = grasp_algorithm(
             num_planes,num_pists,E,P_array,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,True,
-            NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY_ITEM1, MAX_RESTARTS_HC_WARM_START)
+            NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY, MAX_RESTARTS_HC_WARM_START)
         
         time_bi = time.time() - start_bi
 
@@ -717,8 +712,6 @@ def main():
             plot_costs.append(cost_bi)
             plot_times.append(time_bi)
         
-        # Gráficos (igual que en tu item2.py, usando plot_labels, plot_costs, plot_times, conv_hist_fi, conv_hist_bi)
-        # ... (código de gráficos) ...
         if plot_labels and plot_costs:
             plt.figure(figsize=(8,6)) 
             bars=plt.bar(plot_labels, plot_costs, color=['#1f77b4','#ff7f0e'])
