@@ -649,7 +649,7 @@ def main():
     print(f"\nLeyendo: {filename}")
 
     try:
-        num_planes, E, P_array, L, Ci, Ck, tau = read(filename) # Usa la nueva función de carga
+        num_planes, E, P, L, Ci, Ck, tau = read(filename) # Usa la nueva función de carga
         print("-" * 40 + f"\nLectura OK. Aviones: {num_planes}, Pistas: {num_pists}" + "\n" + "-" * 40)
 
         # Parámetros para GRASP
@@ -671,7 +671,7 @@ def main():
         # GRASP con HC Primera Mejora
         start_fi = time.time()
         layout_fi, cost_fi, conv_hist_fi = grasp_algorithm(
-            num_planes,num_pists,E,P_array,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,False,
+            num_planes,num_pists,E,P,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,False,
             NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY, MAX_RESTARTS_HC_WARM_START)
         
 
@@ -679,7 +679,7 @@ def main():
 
         sched_fi, feas_fi = (None,False)
         if layout_fi and cost_fi!=float('inf'): 
-            _,sched_fi,feas_fi = ev_pist_layout(layout_fi,num_pists,E,P_array,L,Ci,Ck,tau)
+            _,sched_fi,feas_fi = ev_pist_layout(layout_fi,num_pists,E,P,L,Ci,Ck,tau)
 
         if not feas_fi: 
             cost_fi = float('inf')
@@ -694,7 +694,7 @@ def main():
         # GRASP con HC Mejor Mejora
         start_bi = time.time()
         layout_bi, cost_bi, conv_hist_bi = grasp_algorithm(
-            num_planes,num_pists,E,P_array,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,True,
+            num_planes,num_pists,E,P,L,Ci,Ck,tau,ALPHA_RCL_GRASP,MAX_ITER_GRASP,True,
             NUM_STOCH_WARM_STARTS, RCL_SIZE_GREEDY, MAX_RESTARTS_HC_WARM_START)
         
         time_bi = time.time() - start_bi
@@ -702,7 +702,7 @@ def main():
         sched_bi, feas_bi = (None,False)
 
         if layout_bi and cost_bi != float('inf'): 
-            _,sched_bi,feas_bi = ev_pist_layout(layout_bi,num_pists,E,P_array,L,Ci,Ck,tau)
+            _,sched_bi,feas_bi = ev_pist_layout(layout_bi,num_pists,E,P,L,Ci,Ck,tau)
         if not feas_bi: cost_bi = float('inf')
         print("\nResultado GRASP + HC Mejor Mejora:") 
         print_runway_solution(sched_bi,cost_bi,feas_bi,layout_bi,num_pists)
@@ -729,7 +729,8 @@ def main():
                 if yval!=float('inf'):
                     plt.text(bar.get_x() + bar.get_width() / 2., yval + 0.01 * max_c, f'{yval:.2f}', ha='center', va='bottom')
 
-            plt.ylabel('Costo');plt.title(f'Comparación Costos GRASP\nCaso {select}, Pistas: {num_pists}') 
+            plt.ylabel('Costo')
+            plt.title(f'Comparación Costos GRASP\nCaso {select}, Pistas: {num_pists}') 
             plt.ylim(top=max_c*1.15 if max_c > 0 else 1.15)
             plt.tight_layout()
             plt.savefig(f"GRASP_costo_c{select}_p{num_pists}.png") 
@@ -751,7 +752,8 @@ def main():
 
             plt.ylabel('Tiempo (s)')
             plt.title(f'Comparación Tiempos GRASP\nCaso {select}, Pistas: {num_pists}')
-            plt.ylim(top=max_t*1.15 if max_t > 0 else 1.15);plt.tight_layout()
+            plt.ylim(top=max_t*1.15 if max_t > 0 else 1.15)
+            plt.tight_layout()
             plt.savefig(f"GRASP_tiempo_c{select}_p{num_pists}.png");plt.show()
 
         plt.figure(figsize=(10,6))
@@ -768,11 +770,14 @@ def main():
 
         if conv_hist_bi and feas_bi:
             bi_pts = [(i,c) for i,c in enumerate(conv_hist_bi) if c!=float('inf')]
-            if bi_pts:iters_bi,costs_bi=zip(*bi_pts);plt.plot(iters_bi,costs_bi,marker='x',ls='--',label='GRASP BI Conv.') 
+            if bi_pts:
+                iters_bi,costs_bi=zip(*bi_pts)
+                plt.plot(iters_bi,costs_bi,marker='x',ls='--',label='GRASP BI Conv.') 
             plotted_bi = True
 
         if plotted_fi or plotted_bi:
-            plt.xlabel('Punto de Muestreo del Mejor Costo');plt.ylabel('Mejor Costo Global')
+            plt.xlabel('Punto de Muestreo del Mejor Costo')
+            plt.ylabel('Mejor Costo Global')
             plt.title(f'Convergencia GRASP\nCaso {select}, Pistas: {num_pists}')
             plt.legend()
             plt.grid(True)
