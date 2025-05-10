@@ -438,12 +438,12 @@ def grasp_multi(
     num_planes: int, num_pist: int, E: np.ndarray, P_array: np.ndarray,
     L: np.ndarray,
     Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray,
-    alpha: float, # alpha se usará solo si la construcción es estocástica
+    alpha: float,
     max_it: int, 
-    use_mejor_mejora: bool, # Para Hill Climbing
-    use_deterministic_construction: bool, # NUEVO PARÁMETRO
+    use_mejor_mejora: bool, 
+    use_deterministic_construction: bool, 
     initial_layouts: List[MultiPist],
-    seed: Optional[int] = None # Añadir seed para la parte estocástica
+    seed: Optional[int] = None
 ) -> Tuple[Optional[MultiPist], float, List[float]]:
     
 
@@ -451,7 +451,7 @@ def grasp_multi(
         print(f"\n--- Starting GRASP (Deterministic Construction) (Pistas: {num_pist}) ---")
     else:
         if seed is not None:
-            random.seed(seed) # Inicializar RNG para la construcción estocástica y selección de RCL
+            random.seed(seed) 
             print(f"\n--- Starting GRASP (Stochastic Construction, seed={seed}) (Pistas: {num_pist}) ---")
         else:
             print(f"\n--- Starting GRASP (Stochastic Construction, no seed) (Pistas: {num_pist}) ---")
@@ -479,7 +479,7 @@ def grasp_multi(
     
     
     if best_sol_cost != float('inf'):
-        cost_history.append(best_sol_cost) # Primer punto del historial
+        cost_history.append(best_sol_cost)
         cost_str_phase1 = f"{best_sol_cost:.2f}"
     else:
         cost_str_phase1 = "inf"
@@ -517,7 +517,7 @@ def grasp_multi(
             cost_history.append(cost_history[-1])
         
 
-        if (i + 1) % 10 == 0 or i == max_it -1 : # Imprimir progreso
+        if (i + 1) % 10 == 0 or i == max_it -1 :
              prog_cost_str = f"{best_sol_cost:.2f}" if best_sol_cost != float('inf') else "inf"
              print(f"  GRASP Iter {i+1}/{max_it} done. Mejor solucion de costo: {prog_cost_str}")
     
@@ -709,13 +709,13 @@ def main():
         RCL_SIZE_STO = 3 
         SEED_FOR_GRASP_ESTOCASTICO = 5 # del item 1
     
-        # --- Variante 1: GRASP con Construcción Estocástica y HC Mejor-Mejora ---
+    
         print("\n--- GRASP ESTOCÁSTICO con Hill Climbing MEJOR-MEJORA ---")
         grasp_sto_layout, grasp_sto_cost, history_sto = grasp_multi(
             num_planes, num_pist, E, P, L, Ci, Ck, tau,
             alpha=GRASP_ALPHA,
             max_it=GRASP_MAX_ITERATIONS,
-            use_mejor_mejora=True, # Usando Mejor-Mejora HC
+            use_mejor_mejora=True,
             use_deterministic_construction=False, 
             initial_layouts=copy.deepcopy(initial_grasp_layouts),
             seed=SEED_FOR_GRASP_ESTOCASTICO 
@@ -761,7 +761,7 @@ def main():
         else:
             conv_hist[label_det] = [float('inf')] * (len(history_det) if history_det else GRASP_MAX_ITERATIONS+1)
             plt_labels.append(f"GRASP Determinista\nHC MejorMejora")
-            plt_costs.append(float('inf')) # O no añadir si es inf
+            plt_costs.append(float('inf')) 
     
     
         print("\nMejor solución GRASP (DETERMINISTA + HC Mejor-Mejora):")
