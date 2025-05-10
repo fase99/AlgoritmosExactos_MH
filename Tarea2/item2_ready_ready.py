@@ -144,7 +144,7 @@ def ev_multi_pist_layout(
     cost = total_cost(overall_schedule, P, Ci, Ck)
     return cost, overall_schedule, True
 
-def greedy_deterministic_multi(
+def greedy_deterministic(
     num_planes: int, num_pist: int, E: np.ndarray, P_array: np.ndarray, L: np.ndarray,
     Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray) -> Tuple[Optional[MultiPist], float, bool]:
 
@@ -196,7 +196,7 @@ def greedy_deterministic_multi(
     return solution_layout, cost, feasible
 
 
-def greedy_stochastic_multi(num_planes: int, num_runways: int, E: np.ndarray, P_array: np.ndarray, L: np.ndarray,
+def greedy_stochastic(num_planes: int, num_runways: int, E: np.ndarray, P_array: np.ndarray, L: np.ndarray,
     Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray, rcl_size: int = 3, seed: Optional[int] = None
     ) -> Tuple[Optional[MultiPist], float, bool]:
 
@@ -445,7 +445,6 @@ def hill_climbing_multi(
    
     return best_overall_layout, final_cost """
 
-# ... (código anterior de grasp_multi) ...
 
 def grasp_multi(
     num_planes: int, num_pist: int, E: np.ndarray, P_array: np.ndarray,
@@ -453,35 +452,34 @@ def grasp_multi(
     Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray,
     alpha: float, max_it: int, use_mejor_mejora: bool,
     initial_layouts: List[MultiPist]
-) -> Tuple[Optional[MultiPist], float, List[float]]: # <--- Añadido List[float] para el historial
+) -> Tuple[Optional[MultiPist], float, List[float]]: 
 
     best_overall_layout: Optional[MultiPist] = None
     best_overall_cost: float = float('inf')
-    cost_history: List[float] = [] # <--- Lista para guardar el historial de costos
+    cost_history: List[float] = [] 
     start_time_grasp = time.time()
 
     print(f"\n--- Starting GRASP (Pistas: {num_pist}) ---")
     print(f"Params: alpha={alpha}, max_iter={max_it}, HC={'BI' if use_mejor_mejora else 'FI'}")
 
-    # Phase 1: Improve Initial Layouts
+    #p1
     valid_initial_layouts = [lyt for lyt in initial_layouts if lyt is not None]
-    # print(f"\n[GRASP] Phase 1: Improving {len(valid_initial_layouts)} initial layout(s)...") # Más verboso
+    
     initial_improvement_made = False
     for i, init_layout in enumerate(valid_initial_layouts):
         hc_layout, hc_cost = hill_climbing_multi(init_layout, num_pist, E, P_array, L, Ci, Ck, tau, use_mejor_mejora)
         if hc_cost < best_overall_cost:
             best_overall_cost, best_overall_layout = hc_cost, hc_layout
-            # print(f"    New best from initial HC #{i+1}: {hc_cost:.2f}") # Más verboso
+            
             initial_improvement_made = True
     
-    # Registrar el costo después de la fase de inicialización si hubo alguna mejora o si se encontró alguna solución factible
+    
     if best_overall_cost != float('inf'):
         cost_history.append(best_overall_cost) # Primer punto del historial
         cost_str_phase1 = f"{best_overall_cost:.2f}"
     else:
         cost_str_phase1 = "inf"
-        # Si no hay solución factible inicial, el historial podría empezar con inf o esperar a la primera solución de GRASP
-        # Por simplicidad, lo dejaremos así y el gráfico manejará los 'inf' (o los ignorará).
+        
 
     if initial_improvement_made:
         print(f"[GRASP] Best cost after Phase 1 (initial HC): {cost_str_phase1}")
@@ -491,12 +489,11 @@ def grasp_multi(
         print(f"[GRASP] No valid initial layouts provided for Phase 1.")
 
 
-    # Phase 2: GRASP Iterations
-    # print(f"\n[GRASP] Phase 2: Starting {max_it} construction/local search iterations...") # Más verboso
+    
     for i in range(max_it):
         constructed_layout = construct_greedy_randomized_multi(num_planes, num_pist, E, L, tau, alpha)
         
-        current_iter_cost = float('inf') # Costo de esta iteración particular
+        current_iter_cost = float('inf') 
 
         if constructed_layout is not None:
             improved_layout, improved_cost_iter = hill_climbing_multi(constructed_layout, num_pist, E, P_array, L, Ci, Ck, tau, use_mejor_mejora)
@@ -504,34 +501,30 @@ def grasp_multi(
 
             if improved_cost_iter < best_overall_cost:
                 best_overall_cost, best_overall_layout = improved_cost_iter, improved_layout
-                # print(f"    Iter {i+1}: New best solution! Cost: {improved_cost_iter:.2f}") # Más verboso
+                
         
-        # Registrar el *mejor costo global encontrado hasta esta iteración*
+        
         if best_overall_cost != float('inf'):
             cost_history.append(best_overall_cost)
-        elif cost_history: # Si ya hay algo en el historial (ej. de la fase inicial), repetimos el último valor si no mejora
+        elif cost_history:
             cost_history.append(cost_history[-1])
-        # Si best_overall_cost sigue siendo inf y cost_history está vacío, no agregamos inf repetidamente aquí.
-        # El gráfico puede empezar desde la primera vez que se encuentra una solución factible.
+        
 
         if (i + 1) % 10 == 0 or i == max_it -1 : # Imprimir progreso
              prog_cost_str = f"{best_overall_cost:.2f}" if best_overall_cost != float('inf') else "inf"
              print(f"  GRASP Iter {i+1}/{max_it} done. Current best global cost: {prog_cost_str}")
     
-    # print(f"\n[GRASP] Finished in {time.time() - start_time_grasp:.4f}s.") # Más verboso
+    
     if best_overall_layout is None:
         print("[GRASP] No feasible solution found after all iterations.")
-        # Si no se encontró solución, el historial podría estar vacío o lleno de 'inf'
-        # Asegurémonos de que el historial no esté completamente vacío si se va a graficar
+        
         if not cost_history and max_it > 0:
-            cost_history = [float('inf')] * max_it # Llenar con inf si no se encontró nada
-        return None, float('inf'), cost_history # <--- Devolver historial
+            cost_history = [float('inf')] * max_it 
+        return None, float('inf'), cost_history 
 
-    # Verificar costo final (opcional, ya debería ser best_overall_cost)
-    # final_cost_check, _, _ = ev_multi_pist_layout(best_overall_layout, num_pist, E, P_array, L, Ci, Ck, tau)
-    # print(f"[GRASP] Best solution cost (from tracking): {best_overall_cost:.2f}, Verified final: {final_cost_check:.2f}")
+
     
-    return best_overall_layout, best_overall_cost, cost_history # <--- Devolver historial
+    return best_overall_layout, best_overall_cost, cost_history 
 
 
 def print_solution_multi(
@@ -592,7 +585,7 @@ def run_multiple_stochastic_multi(
     for i in range(num_runs):
         seed = i
         start_time = time.time()
-        layout, cost, feasible = greedy_stochastic_multi(num_planes, num_runways, E, P_array, L, Ci, Ck, tau, rcl_size, seed)
+        layout, cost, feasible = greedy_stochastic(num_planes, num_runways, E, P_array, L, Ci, Ck, tau, rcl_size, seed)
         end_time = time.time()
         
         overall_schedule = None
@@ -652,7 +645,7 @@ def main():
         print("\n--- Greedy Determinista (Multi-Pista) ---")
 
         start_det = time.time()
-        det_layout, det_cost, det_feasible = greedy_deterministic_multi(num_planes, num_pist, E, P, L, Ci, Ck, tau)
+        det_layout, det_cost, det_feasible = greedy_deterministic(num_planes, num_pist, E, P, L, Ci, Ck, tau)
         print(f"Tiempo: {time.time() - start_det:.4f}s")
         det_schedule = None
 
@@ -691,7 +684,7 @@ def main():
         
         plot_labels = []
         plot_costs = []
-        convergence_histories = {}
+        conv_hist = {}
 
 
         initial_grasp_layouts = []
@@ -703,7 +696,7 @@ def main():
         print(f"\nLayouts iniciales válidos para GRASP: {len(initial_grasp_layouts)}")
 
         print("\n" + "=" * 40 + "\nALGORITMO GRASP (Multi-Pista)\n" + "=" * 40)
-        GRASP_ALPHA, GRASP_MAX_ITERATIONS = 0.3, 50 # Tune these
+        GRASP_ALPHA, GRASP_MAX_ITERATIONS = 0.3, 60 
 
 
 
@@ -720,17 +713,17 @@ def main():
         if grasp_fi_layout and grasp_fi_cost != float('inf'):
             _, grasp_fi_schedule, grasp_fi_feasible = ev_multi_pist_layout(grasp_fi_layout, num_pist, E, P, L, Ci, Ck, tau)
 
-        label_fi = f"GRASP + HC Primera Mejora (Pistas: {num_pist})"
+        label_fi = f"GRASP + HC Alguna-Mejora (Pistas: {num_pist})"
         if grasp_fi_feasible:
-            convergence_histories[label_fi] = history_fi
+            conv_hist[label_fi] = history_fi
         else: 
-            convergence_histories[label_fi] = [float('inf')] * len(history_fi) if history_fi else [float('inf')] * GRASP_MAX_ITERATIONS
+            conv_hist[label_fi] = [float('inf')] * len(history_fi) if history_fi else [float('inf')] * GRASP_MAX_ITERATIONS
 
 
         print("\nMejor solución GRASP (ALGUNA-MEJORA):")
         print_solution_multi(grasp_fi_schedule, grasp_fi_cost, grasp_fi_feasible, grasp_fi_layout, num_pist)
         if grasp_fi_feasible: 
-            plot_labels.append(f"GRASP + HC Primera Mejora\n(Pistas: {num_pist})")
+            plot_labels.append(f"GRASP + HC Alguna-Mejora\n(Pistas: {num_pist})")
 
             plot_costs.append(grasp_fi_cost)
 
@@ -747,11 +740,11 @@ def main():
 
         label_bi = f"GRASP + HC Mejor Mejora (Pistas: {num_pist})"
         if grasp_bi_feasible:
-            convergence_histories[label_bi] = history_bi
+            conv_hist[label_bi] = history_bi
         else:
-            convergence_histories[label_bi] = [float('inf')] * len(history_bi) if history_bi else [float('inf')] * GRASP_MAX_ITERATIONS
+            conv_hist[label_bi] = [float('inf')] * len(history_bi) if history_bi else [float('inf')] * GRASP_MAX_ITERATIONS
 
-        print("\nMejor solución GRASP (Mejor Mejora):")
+        print("\nMejor solución GRASP (Mejor-Mejora):")
         print_solution_multi(grasp_bi_schedule, grasp_bi_cost, grasp_bi_feasible, grasp_bi_layout, num_pist)
 
         if grasp_bi_feasible: 
@@ -794,27 +787,15 @@ def main():
             print("\nNo se generó gráfico porque no se obtuvieron resultados factibles para comparar.")
         
 
-        if convergence_histories:
+        if conv_hist:
             plt.figure(figsize=(12, 7))
-            for label, history in convergence_histories.items():
-                # Filtrar valores inf para que no arruinen la escala del gráfico,
-                # o reemplazarlos por un valor muy alto si se quiere ver que no convergieron a algo bueno.
-                # Opción 1: Filtrar 'inf'
+            for label, history in conv_hist.items():
+                
                 iterations = [i for i, cost in enumerate(history) if cost != float('inf')]
                 costs_to_plot = [cost for cost in history if cost != float('inf')]
 
-                # Opción 2: Reemplazar 'inf' (puede ser útil si quieres ver un plato)
-                # max_sensible_cost = 0
-                # for h in convergence_histories.values():
-                #     for c_val in h:
-                #         if c_val != float('inf') and c_val > max_sensible_cost:
-                #             max_sensible_cost = c_val
-                # if max_sensible_cost == 0: max_sensible_cost = 1 # Evitar 0 si todo fue inf
-
-                # costs_to_plot = [c if c != float('inf') else max_sensible_cost * 1.1 for c in history] # Reemplazar inf
-                # iterations = list(range(len(costs_to_plot)))
-
-                if costs_to_plot: # Solo graficar si hay puntos válidos
+                
+                if costs_to_plot: 
                     plt.plot(iterations, costs_to_plot, marker='o', linestyle='-', markersize=4, label=label)
                 else:
                     print(f"No se graficó la convergencia para '{label}' porque no se encontraron costos factibles en su historial.")
