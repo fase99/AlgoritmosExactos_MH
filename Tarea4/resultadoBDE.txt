@@ -1,0 +1,123 @@
+Cargando datos...
+Datos cargados.
+Número de características originales antes del pre-procesamiento: 42
+Aplicando pre-procesamiento...
+Dimensiones de los datos pre-procesados: (257673, 196)
+Número de características después del pre-procesamiento (espacio de búsqueda para la metaheurística): 196
+Datos pre-procesados y separados (train/test).
+
+Ejecutando Binary Differential Evolution (BDE) con 30 individuos por 100 generaciones...
+Espacio de búsqueda binario tiene 196 dimensiones.
+Generación 10/100, Mejor Fitness: 0.8781, Tiempo: 95.34s
+Generación 20/100, Mejor Fitness: 0.8783, Tiempo: 190.66s
+Generación 30/100, Mejor Fitness: 0.8783, Tiempo: 285.42s
+Generación 40/100, Mejor Fitness: 0.8783, Tiempo: 380.18s
+Generación 50/100, Mejor Fitness: 0.8783, Tiempo: 474.96s
+Generación 60/100, Mejor Fitness: 0.8788, Tiempo: 571.44s
+Generación 70/100, Mejor Fitness: 0.8788, Tiempo: 671.71s
+Generación 80/100, Mejor Fitness: 0.8788, Tiempo: 769.48s
+Generación 90/100, Mejor Fitness: 0.8791, Tiempo: 867.37s
+Generación 100/100, Mejor Fitness: 0.8791, Tiempo: 961.57s
+
+BDE finalizado.
+Tiempo total de ejecución BDE: 961.57s
+
+--- Evaluación del Mejor Subconjunto de Características ---
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Métricas de rendimiento finales:
+Accuracy (ACC): 0.9040
+Detection Rate (DR): 0.8921
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Métricas de rendimiento finales:
+Accuracy (ACC): 0.9040
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Características seleccionadas: 101/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Métricas de rendimiento finales:
+
+Métricas de rendimiento finales:
+Métricas de rendimiento finales:
+Accuracy (ACC): 0.9040
+Accuracy (ACC): 0.9040
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 36, 37, 39, 40, 41, 45, 46, 50, 57, 59, 61, 65, 67, 71, 73, 74, 76, 78, 79, 80, 83, 86, 87, 89, 90, 91, 92, 93, 96, 97, 98, 100, 101, 103, 106, 108, 109, 110, 111, 112, 115, 116, 117, 120, 122, 125, 126, 127, 128, 131, 136, 137, 138, 140, 142, 144, 147, 149, 155, 158, 159, 161, 162, 166, 169, 170, 172, 173, 177, 179, 185, 186, 188, 189, 190, 192, 195]
+PS C:\Users\Felipe\Desktop\Tarea4>
+
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 36, 37, 39, 40, 41, 45, 46, 50, 57, 59, 61, 65, 67, 71, 73, 74, 76, 78, 79, 80, 83, 86, 87, 89, 90, 91, 92, 93, 96, 97, 98, 100, 101, 103, 106, 108, 109, 110, 111, 112, 115, 116, 117, 120, 122, 125, 126, 127, 128, 131, 136, 137, 138, 140, 142, 144, 147, 149, 155, 158, 159, 161, 162, 166, 169, 170, 172, 173, 177, 179, 185, 186, 188, 189, 190, 192, 195]
+PS C:\Users\Felipe\Desktop\Tarea4>
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 36, 37, 39, 40, 41, 45, 46, 50, 57, 59, 61, 65, 67, 71, 73, 74, 76, 78, 79, 80, 83, 86, 87, 89, 90, 91, 92, 93, 96, 97, 98, 100, 101, 103, 106, 108, 109, 110, 111, 112, 115, 116, 117, 120, 122, 125, 126, 127, 128, 131, 136, 137, 138, 140, 142, 144, 147, 149, 155, 158, 159, 161, 162, 166, 169, 170, 172, 173, 177, 179, 185, 186, 188, 189, 190, 192, 195]
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 36, 37, 39, 40, 41, 45, 46, 50, 57, 59, 61, 65, 67, 71, 73, 74, 76, 78, 79, 80, 83, 86, 87, 89, 90, 91, 92, 93, 96, 97, 98, 100Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Detection Rate (DR): 0.8921
+Precision (PR): 0.9642
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+F1-Score (F1): 0.9267
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+False Positive Rate (FPR): 0.0706
+Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, Número de características seleccionadas: 101
+Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, Índices de las características seleccionadas (en el espacio pre-procesado): [1, 4, 5, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 34, 36, 37, 39, 40, 41, 45, 46, 50, 57, 59, 61, 65, 67, 71, 73, 74, 76, 78, 79, 80, 83, 86, 87, 89, 90, 91, 92, 93, 96, 97, 98, 100, 101, 103, 106, 108, 109, 110, 111, 112, 115, 116, 117, 120, 122, 125, 126, 127, 128, 131, 136, 137, 138, 140, 142, 144, 147, 149, 155, 158, 159, 161, 162, 166, 169, 170, 172, 173, 177, 179, 185, 186, 188, 189, 190, 192, 195]

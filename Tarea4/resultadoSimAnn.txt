@@ -1,0 +1,76 @@
+Datos cargados.
+Número de características originales antes del pre-procesamiento: 42
+Aplicando pre-procesamiento...
+Dimensiones de los datos pre-procesados: (257673, 196)
+Número de características después del pre-procesamiento (espacio de búsqueda para la metaheurística): 196
+Datos pre-procesados y separados (train/test).
+
+Ejecutando Simulated Annealing (SA) con T_initial=100.0, alpha=0.995, 5000 iteraciones...
+Espacio de búsqueda binario tiene 196 dimensiones.
+Iteración 100/5000, Temp: 60.5770, Current Fitness: 0.8603, Best Fitness: 0.8789, Tiempo: 28.12s
+Iteración 200/5000, Temp: 36.6958, Current Fitness: 0.8731, Best Fitness: 0.8789, Tiempo: 59.56s
+Iteración 300/5000, Temp: 22.2292, Current Fitness: 0.8643, Best Fitness: 0.8828, Tiempo: 94.04s
+Iteración 400/5000, Temp: 13.4658, Current Fitness: 0.8659, Best Fitness: 0.8828, Tiempo: 124.98s
+Iteración 500/5000, Temp: 8.1572, Current Fitness: 0.8170, Best Fitness: 0.8828, Tiempo: 154.33s
+Iteración 600/5000, Temp: 4.9414, Current Fitness: 0.8474, Best Fitness: 0.8828, Tiempo: 183.63s
+Iteración 700/5000, Temp: 2.9933, Current Fitness: 0.8345, Best Fitness: 0.8828, Tiempo: 215.94s
+Iteración 800/5000, Temp: 1.8133, Current Fitness: 0.8326, Best Fitness: 0.8828, Tiempo: 245.22s
+Iteración 900/5000, Temp: 1.0984, Current Fitness: 0.8591, Best Fitness: 0.8828, Tiempo: 278.19s
+Iteración 1000/5000, Temp: 0.6654, Current Fitness: 0.8722, Best Fitness: 0.8828, Tiempo: 309.21s
+Iteración 1100/5000, Temp: 0.4031, Current Fitness: 0.8771, Best Fitness: 0.8828, Tiempo: 340.49s
+Iteración 1200/5000, Temp: 0.2442, Current Fitness: 0.8723, Best Fitness: 0.8828, Tiempo: 372.30s
+Iteración 1300/5000, Temp: 0.1479, Current Fitness: 0.8713, Best Fitness: 0.8828, Tiempo: 402.83s
+Iteración 1400/5000, Temp: 0.0896, Current Fitness: 0.8725, Best Fitness: 0.8828, Tiempo: 437.05s
+Iteración 1500/5000, Temp: 0.0543, Current Fitness: 0.8721, Best Fitness: 0.8828, Tiempo: 472.83s
+Iteración 1600/5000, Temp: 0.0329, Current Fitness: 0.8700, Best Fitness: 0.8828, Tiempo: 504.46s
+Iteración 1700/5000, Temp: 0.0199, Current Fitness: 0.8708, Best Fitness: 0.8828, Tiempo: 534.96s
+Iteración 1800/5000, Temp: 0.0121, Current Fitness: 0.8806, Best Fitness: 0.8833, Tiempo: 566.66s
+Iteración 1900/5000, Temp: 0.0073, Current Fitness: 0.8807, Best Fitness: 0.8851, Tiempo: 594.62s
+Iteración 2000/5000, Temp: 0.0044, Current Fitness: 0.8832, Best Fitness: 0.8851, Tiempo: 622.22s
+Iteración 2100/5000, Temp: 0.0027, Current Fitness: 0.8820, Best Fitness: 0.8853, Tiempo: 653.61s
+Iteración 2200/5000, Temp: 0.0016, Current Fitness: 0.8828, Best Fitness: 0.8853, Tiempo: 685.94s
+Iteración 2300/5000, Temp: 0.0010, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 716.23s
+Iteración 2400/5000, Temp: 0.0006, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 746.62s
+Iteración 2500/5000, Temp: 0.0004, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 776.62s
+Iteración 2600/5000, Temp: 0.0002, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 806.81s
+Iteración 2700/5000, Temp: 0.0001, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 837.48s
+Iteración 2800/5000, Temp: 0.0001, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 870.43s
+Iteración 2900/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 901.73s
+Iteración 3000/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 937.70s
+Iteración 3100/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 973.15s
+Iteración 3200/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1006.02s
+Iteración 3300/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1036.79s
+Iteración 3400/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1069.40s
+Iteración 3500/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1101.96s
+Iteración 3600/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1132.89s
+Iteración 3700/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1162.96s
+Iteración 3800/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1192.94s
+Iteración 3900/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1223.21s
+Iteración 4000/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1253.87s
+Iteración 4100/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1285.75s
+Iteración 4200/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1318.66s
+Iteración 4300/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1351.35s
+Iteración 4400/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1381.33s
+Iteración 4500/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1411.50s
+Iteración 4600/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1441.27s
+Iteración 4700/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1471.27s
+Iteración 4800/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1501.15s
+Iteración 4900/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1531.11s
+Iteración 5000/5000, Temp: 0.0000, Current Fitness: 0.8844, Best Fitness: 0.8853, Tiempo: 1560.96s
+
+Simulated Annealing finalizado.
+Tiempo total de ejecución SA: 1560.96s
+
+--- Evaluación del Mejor Subconjunto de Características (Simulated Annealing) ---
+Características seleccionadas: 82/196 (del espacio pre-procesado)
+Entrenando clasificador final con el mejor subconjunto...
+Evaluando clasificador final en el test set...
+
+Métricas de rendimiento finales:
+Accuracy (ACC): 0.9033
+Detection Rate (DR): 0.8908
+Precision (PR): 0.9645
+F1-Score (F1): 0.9262
+False Positive Rate (FPR): 0.0699
+Número de características seleccionadas: 82
+Índices de las características seleccionadas (en el espacio pre-procesado): [3, 4, 5, 6, 9, 12, 15, 17, 18, 20, 24, 27, 28, 31, 37, 39, 41, 42, 45, 47, 52, 53, 56, 58, 69, 70, 75, 77, 80, 81, 86, 87, 88, 92, 93, 95, 96, 97, 98, 101, 102, 106, 108, 112, 113, 117, 119, 121, 122, 124, 125, 126, 129, 131, 136, 141, 142, 143, 148, 149, 150, 151, 153, 156, 158, 161, 162, 163, 164, 165, 172, 173, 174, 176, 177, 179, 180, 183, 184, 187, 191, 192]  

@@ -241,7 +241,7 @@ def construct_deterministic_multi(
 
 
 def greedy_stochastic(num_planes: int, num_pist: int, E: np.ndarray, P_array: np.ndarray, L: np.ndarray,
-    Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray, rcl_size: int = 3, seed: Optional[int] = None
+    Ci: np.ndarray, Ck: np.ndarray, tau: np.ndarray, rcl_size: int = 5, seed: Optional[int] = None
     ) -> Tuple[Optional[MultiPist], float, bool]:
 
     if seed is not None: random.seed(seed)
@@ -783,7 +783,7 @@ def main():
             costs_to_plt_bar = [plt_costs[i] for i in valid_indices_bar]
 
             if labels_to_plot_bar and costs_to_plt_bar:
-                plt.figure(figsize=(10, 6))
+                plt.figure(figsize=(7, 7))
                 bars = plt.bar(labels_to_plot_bar, costs_to_plt_bar, color=['skyblue', 'lightcoral', 'lightgreen', 'gold']) # Añade más colores si es necesario
                 for bar in bars:
                     yval = bar.get_height()
@@ -817,8 +817,10 @@ def main():
             plt.xlabel("Iteración GRASP / Punto de Registro de Costo")
             plt.ylabel("Mejor Costo Global Encontrado")
             plt.title(f"Convergencia de Variantes GRASP: Caso {select}, Pistas: {num_pist}")
+            plt.margins(x=0.1, y=0.2)
 
-            if any(conv_hist.values()): plt.legend() 
+            if any(conv_hist.values()): 
+                plt.legend() 
             plt.grid(True)
             plt.tight_layout()
             convergence_plot_filename = f"convergencia_variantes_grasp_caso{select}_pistas{num_pist}.png"
