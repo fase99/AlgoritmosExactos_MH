@@ -1,4 +1,4 @@
-# AlgoritmosExactos_MH 📊
+# Algoritmo Exactos y Metaheurísticas📊
 
 Repositorio de tareas para la asignatura **Algoritmos Exactos y Metaheurísticas** de la Universidad Diego Portales.
 
