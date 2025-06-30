@@ -161,38 +161,23 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
             for j in range(total_features):
                  # Aplicar crossover o asegurar al menos un bit diferente
                 if random.random() < CR or j == jrand:
-                    # Mutación continua conceptual: a + F * (b - c)
-                    # Transformación a probabilidad con Sigmoid
-                    # Evitar b[j] - c[j] == 0 en algunos casos si a[j] es 0 o 1?
-                    # Una forma común de BDE Mutation: sigmoid(a[j] + F * (b[j] - c[j]))
-                    # Otra: sigmoid(F * (b[j] - c[j])) donde a es best
-                    # Usemos la forma simple: Influencia de los padres a, b, c
-                    # Esto es una simplificación, BDE tiene mutaciones más específicas
-                    # Vamos a usar una mutación más estándar para BDE: v_j = sigmoid(F * (a[j] + b[j] - c[j])) o similar
-                    # O una probabilística directa como en el primer intento, pero ajustando la influencia
-                    # v_j = sigmoid(a[j] + F * (b[j] - c[j])) # Esto funciona pero es raro si a,b,c son 0/1
-                    # v_j = sigmoid(F * (b[j] - c[j])) # Esto si a es el mejor
 
                     # Mutación simple probabilística (como en algunos BDEs):
-                    v_j = sigmoid(population[i, j] + F * (b[j] - c[j])) # Basado en el vector original + diferencia
+                    v_j = sigmoid(population[i, j] + F * (b[j] - c[j])) 
 
-                    # Transformación a binario: Convertir la probabilidad en un valor binario
                     if random.random() < v_j:
                          trial_vector[j] = 1
                     else:
                          trial_vector[j] = 0
                 else:
-                    trial_vector[j] = population[i, j] # Usar el valor original
+                    trial_vector[j] = population[i, j] 
 
-            # Asegurar que el vector trial no sea todo ceros o todo unos (penalizado en fitness)
             if np.sum(trial_vector) == 0 or np.sum(trial_vector) == total_features:
-                # Si se generó un vector inválido, intentamos repararlo o simplemente saltamos
-                # Por simplicidad, en lugar de generar uno nuevo, usaremos el original si es válido
+
                 if np.sum(population[i]) > 0 and np.sum(population[i]) < total_features:
                      trial_vector = population[i].copy() # Usar el padre si era válido
                 else:
-                     # Si el padre también era inválido (poco probable si la inicialización es correcta),
-                     # Generamos un vector aleatorio válido
+
                      trial_vector = np.random.randint(0, 2, size=total_features)
                      while np.sum(trial_vector) == 0 or np.sum(trial_vector) == total_features:
                          trial_vector = np.random.randint(0, 2, size=total_features)
@@ -247,13 +232,10 @@ def evaluate_final_model(best_individual, X_train, X_test, y_train, y_test, orig
         print("No se seleccionó ninguna característica. No se puede evaluar el modelo final.")
         return
 
-    # Seleccionar solo las características del mejor individuo
     X_train_selected = X_train[:, selected_features_indices]
     X_test_selected = X_test[:, selected_features_indices]
 
-    # Entrenar el clasificador final con los parámetros tunneados del paper (Table 6)
-    # Usaremos los valores de la Table 6 del paper para RF
-    final_classifier = RandomForestClassifier(n_estimators=500, # Más robusto que en fitness
+    final_classifier = RandomForestClassifier(n_estimators=500,
                                             max_depth=4,
                                             min_samples_leaf=1,
                                             min_samples_split=2,
@@ -269,22 +251,10 @@ def evaluate_final_model(best_individual, X_train, X_test, y_train, y_test, orig
     acc = accuracy_score(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
 
-    # Para métricas como DR, PR, F1, FPR necesitamos TP, TN, FP, FN
-    # En clasificación binaria (0, 1):
-    # TN: Actual 0, Predicted 0
-    # FP: Actual 0, Predicted 1
-    # FN: Actual 1, Predicted 0
-    # TP: Actual 1, Predicted 1
-
-    # Evitar errores si la matriz de confusión no tiene la forma esperada (ej. si solo hay una clase en el test set, poco probable aquí)
     if cm.shape == (2, 2):
         TN, FP, FN, TP = cm.ravel()
     else:
-        # Esto puede ocurrir si una clase no aparece en y_true o y_pred
-        # Un manejo más robusto sería contar manualmente o usar Average='binary' en metrics
-        # Para este dataset binario, asumimos cm 2x2 si hay ambas clases
-        # Si solo predijo una clase, algunas de TP, FP, TN, FN serán 0
-        # Podemos recalcular con metrics si cm no es 2x2
+
         print("Advertencia: Matriz de confusión no es 2x2. Recalculando métricas.")
         TP = ((y_test == 1) & (y_pred == 1)).sum()
         TN = ((y_test == 0) & (y_pred == 0)).sum()
@@ -296,8 +266,7 @@ def evaluate_final_model(best_individual, X_train, X_test, y_train, y_test, orig
     pr = precision_score(y_test, y_pred, average='binary') # PR (Precision)
     f1 = f1_score(y_test, y_pred, average='binary')     # F1-Score
 
-    # FPR (False Positive Rate) = FP / (FP + TN)
-    # Manejar división por cero si TN + FP = 0 (caso raro en datasets grandes)
+
     fpr = FP / (FP + TN) if (FP + TN) > 0 else 0.0
 
     print("\nMétricas de rendimiento finales:")
@@ -309,26 +278,11 @@ def evaluate_final_model(best_individual, X_train, X_test, y_train, y_test, orig
     print(f"Número de características seleccionadas: {num_selected_features}")
     print(f"Índices de las características seleccionadas (en el espacio pre-procesado): {selected_features_indices.tolist()}")
 
-    # --- Opcional: Intentar mapear índices a nombres de características ---
-    # Esto es complejo porque OHE crea nuevos nombres.
-    # La mejor manera es obtener los nombres de salida del preprocessor fit()
-    # Y luego mapear los selected_features_indices a esos nombres.
-    # Como no guardamos el objeto preprocessor completo fuera de load_and_preprocess_data
-    # y get_feature_names_out() puede variar, lo omitiremos por simplicidad,
-    # pero es el siguiente paso para ver qué features se seleccionaron nominalmente.
-    # Puedes guardar el objeto 'preprocessor' en la función load_and_preprocess_data
-    # y usar preprocessor.get_feature_names_out()[selected_features_indices]
-
-
-# --- Main Execution ---
 
 if __name__ == "__main__":
-    # IMPORTANT: Download the datasets first
-    # UNSW-NB15_training-set.csv and UNSW_NB15_testing-set.csv
-    # You can find them online, e.g., on Kaggle or the UNSW website
-    # Descarga los archivos y actualiza las rutas:
-    train_file = './UNSW_NB15_training-set.csv' # <--- ACTUALIZA ESTA RUTA
-    test_file = './UNSW_NB15_testing-set.csv'   # <--- ACTUALIZA ESTA RUTA
+
+    train_file = './UNSW_NB15_training-set.csv' 
+    test_file = './UNSW_NB15_testing-set.csv'   
 
     # Verificar si los archivos existen
     import os
@@ -340,29 +294,23 @@ if __name__ == "__main__":
         # Carga y pre-procesamiento
         X_train, X_test, y_train, y_test, original_features, categorical_features = load_and_preprocess_data(train_file, test_file)
 
-        # Número total de características después del pre-procesamiento
         total_features_count = X_train.shape[1]
 
-        # Parámetros para BDE (ajustar según rendimiento, estos son ejemplos iniciales)
-        # El paper no especifica parámetros de BGSA/BGWO, estos son valores típicos para EAs
-        # Ajusta estos para una ejecución más rápida o más profunda
+
         bde_pop_size = 30
-        bde_num_generations = 100 # Número de generaciones, ajustar para más tiempo de búsqueda
-        bde_F = 0.8 # Factor de escalado (influencia de la diferencia) - valor común 0.5-1.0
-        bde_CR = 0.9 # Probabilidad de crossover (usar vector mutante) - valor común 0.7-1.0
+        bde_num_generations = 100 
+        bde_F = 0.8 
+        bde_CR = 0.9 
 
 
-        # Ejecutar BDE para encontrar el mejor subconjunto de características
         best_features_binary_vector, final_best_fitness, fitness_history = run_bde(
             X_train, X_test, y_train, y_test,
             bde_pop_size, bde_num_generations, bde_F, bde_CR,
             total_features_count
         )
 
-        # Evaluar el modelo final con el mejor subconjunto
         evaluate_final_model(best_features_binary_vector, X_train, X_test, y_train, y_test, original_features, categorical_features)
 
-        # Opcional: Graficar la convergencia del fitness (requiere matplotlib)
         try:
             import matplotlib.pyplot as plt
             plt.figure(figsize=(10, 6))
