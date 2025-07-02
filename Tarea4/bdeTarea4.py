@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split # Aunque usaremos splits fijos
+from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -11,10 +11,8 @@ import time
 import math
 import warnings
 
-# Ignorar warnings para mayor claridad en la salida
-warnings.filterwarnings('ignore')
 
-# --- 1. Carga y Pre-procesamiento del Dataset ---
+warnings.filterwarnings('ignore')
 
 def load_and_preprocess_data(train_path, test_path):
     print("Cargando datos...")
@@ -22,41 +20,33 @@ def load_and_preprocess_data(train_path, test_path):
     test_df = pd.read_csv(test_path)
     print("Datos cargados.")
 
-    # Combinar para asegurar el mismo pre-procesamiento y obtener el esquema completo de columnas
+
     combined_df = pd.concat([train_df, test_df], ignore_index=True)
 
-    # Identificar características y la variable objetivo (label binaria)
-    # Según el paper, el label binario es 'label' (0 para normal, 1 para ataque)
-    # Eliminamos 'id' y 'attack_cat' ya que 'label' es la objetivo binaria
-    # El paper menciona 42/43 características independientes en diferentes tablas/contextos
-    # En el dataset raw, sin id, attack_cat, label hay 43 columnas
+
     X = combined_df.drop(['id', 'attack_cat', 'label'], axis=1)
     y = combined_df['label']
 
     print(f"Número de características originales antes del pre-procesamiento: {X.shape[1]}")
 
 
-    # Identificar columnas categóricas y numéricas
+
     categorical_features = X.select_dtypes(include=['object']).columns
     numerical_features = X.select_dtypes(include=np.number).columns
 
-    # Crear preprocesador
-    # One-Hot Encoding para categóricas, Min-Max Scaling para numéricas
-    # handle_unknown='ignore' es útil si el test set tiene valores categóricos no vistos en train
+   
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', MinMaxScaler(), numerical_features),
             ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)])
 
     print("Aplicando pre-procesamiento...")
-    # Ajustar y transformar los datos
+
     X_processed = preprocessor.fit_transform(X)
     print(f"Dimensiones de los datos pre-procesados: {X_processed.shape}")
     print(f"Número de características después del pre-procesamiento (espacio de búsqueda para la metaheurística): {X_processed.shape[1]}")
 
 
-    # Separar de nuevo en conjuntos de entrenamiento y prueba usando los índices originales
-    # Asumiendo que los archivos train_df y test_df originales mantenían el orden
     train_size = len(train_df)
     X_train_processed = X_processed[:train_size]
     X_test_processed = X_processed[train_size:]
@@ -65,56 +55,42 @@ def load_and_preprocess_data(train_path, test_path):
 
     print("Datos pre-procesados y separados (train/test).")
 
-    # Opcional: Intentar obtener los nombres de las características post-procesamiento
-    # Esto es un poco avanzado y depende de la versión de sklearn y la naturaleza de las features
-    # Dejaremos la impresión de índices por simplicidad como antes, ya que es clara
-    # feature_names_out = preprocessor.get_feature_names_out()
 
-    return X_train_processed, X_test_processed, y_train, y_test, X.columns, categorical_features # Devolvemos nombres originales categóricos si se necesitan más adelante
+    return X_train_processed, X_test_processed, y_train, y_test, X.columns, categorical_features 
 
-# --- 2. Definición de la Fitness Function (Wrapper) ---
+
 
 def fitness_function(individual, X_train, X_test, y_train, y_test):
-    # Individual es un vector binario (numpy array)
+
     selected_features_indices = np.where(individual == 1)[0]
     num_selected_features = len(selected_features_indices)
-    total_features = len(individual) # Esto es correcto: longitud del vector binario = número de features en el espacio optimizado
+    total_features = len(individual) 
 
-    # Penalizar si no se selecciona ninguna característica o si se seleccionan todas
     if num_selected_features == 0 or num_selected_features == total_features:
-         return -1.0 # Fitness muy bajo (usamos -1.0 en lugar de 0.0 para maximización)
+         return -1.0 
 
-    # Seleccionar solo las características indicadas del dataset pre-procesado
     X_train_selected = X_train[:, selected_features_indices]
     X_test_selected = X_test[:, selected_features_indices]
 
-    # Entrenar y evaluar el clasificador (Random Forest)
-    # Parametros de RF tunneados en el paper (Table 6), usaremos valores razonables por simplicidad
-    # n_estimators=100 (por defecto), max_depth=4, min_samples_leaf=1, min_samples_split=2
-    # Vamos a usar n_estimators=50, max_depth=4 para una evaluación más rápida dentro del fitness
+
     classifier = RandomForestClassifier(n_estimators=50, max_depth=4, random_state=42, n_jobs=-1)
     classifier.fit(X_train_selected, y_train)
     y_pred = classifier.predict(X_test_selected)
 
-    # Calcular la métrica de rendimiento (Accuracy)
+
     accuracy = accuracy_score(y_test, y_pred)
 
-    # Calcular el fitness (Maximizar Accuracy, Minimizar Features)
-    # w1=1, w2=0.05 (penalización pequeña por característica)
-    # Aseguramos que fitness sea negativo o 0 si num_selected_features == 0 o total
     if num_selected_features > 0 and num_selected_features < total_features:
         w1 = 1.0
         w2 = 0.05
         fitness = w1 * accuracy - w2 * (num_selected_features / total_features)
     else:
-        fitness = -1.0 # Muy bajo si la selección es inválida
+        fitness = -1.0 
 
     return fitness
 
-# --- 3. Implementación del Algoritmo Binary Differential Evolution (BDE) ---
-
 def sigmoid(x):
-    # Evitar overflow para valores muy grandes o pequeños
+
     if x >= 500:
         return 1.0
     elif x <= -500:
@@ -125,10 +101,9 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
     print(f"\nEjecutando Binary Differential Evolution (BDE) con {pop_size} individuos por {num_generations} generaciones...")
     print(f"Espacio de búsqueda binario tiene {total_features} dimensiones.")
 
-    # Inicialización: Crear una población de individuos binarios aleatorios
-    # Nos aseguramos de que al menos algunos tengan características seleccionadas
+
     population = np.random.randint(0, 2, size=(pop_size, total_features))
-    # Opcional: Asegurar que ningún individuo inicie con 0 o todas las features seleccionadas
+
     for i in range(pop_size):
         while np.sum(population[i]) == 0 or np.sum(population[i]) == total_features:
              population[i] = np.random.randint(0, 2, size=total_features)
@@ -147,22 +122,21 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
         new_fitness_scores = np.zeros(pop_size)
 
         for i in range(pop_size):
-            # Seleccionar tres individuos distintos aleatorios (a, b, c)
+        
             indices = [idx for idx in range(pop_size) if idx != i]
             a_idx, b_idx, c_idx = random.sample(indices, 3)
             a, b, c = population[a_idx], population[b_idx], population[c_idx]
 
-            # Mutación y Crossover (Adaptado para binario/probabilidad)
-            # Inspirado en BDE - combina elementos de DE con transformación binaria
+
             trial_vector = np.zeros(total_features)
-            # Asegurar al menos un bit diferente debido al crossover (DE/binary Crossover)
+ 
             jrand = random.randint(0, total_features - 1)
 
             for j in range(total_features):
-                 # Aplicar crossover o asegurar al menos un bit diferente
+   
                 if random.random() < CR or j == jrand:
 
-                    # Mutación simple probabilística (como en algunos BDEs):
+     
                     v_j = sigmoid(population[i, j] + F * (b[j] - c[j])) 
 
                     if random.random() < v_j:
@@ -183,10 +157,10 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
                          trial_vector = np.random.randint(0, 2, size=total_features)
 
 
-            # Evaluación del vector trial
+
             trial_fitness = fitness_function(trial_vector, X_train, X_test, y_train, y_test)
 
-            # Selección: Reemplazar si el vector trial es mejor
+
             if trial_fitness > fitness_scores[i]:
                 new_population[i] = trial_vector
                 new_fitness_scores[i] = trial_fitness
@@ -197,7 +171,6 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
         population = new_population
         fitness_scores = new_fitness_scores
 
-        # Actualizar el mejor individuo global
         current_best_fitness = np.max(fitness_scores)
         current_best_individual = population[np.argmax(fitness_scores)].copy()
 
@@ -217,12 +190,11 @@ def run_bde(X_train, X_test, y_train, y_test, pop_size, num_generations, F, CR, 
 
     return best_individual, best_fitness, history_best_fitness
 
-# --- 4. Evaluación del Mejor Resultado Final ---
 
 def evaluate_final_model(best_individual, X_train, X_test, y_train, y_test, original_features, cat_feature_names):
     selected_features_indices = np.where(best_individual == 1)[0]
     num_selected_features = len(selected_features_indices)
-    total_features_in_optimized_space = len(best_individual) # Es el tamaño del espacio de búsqueda binario
+    total_features_in_optimized_space = len(best_individual) 
 
 
     print("\n--- Evaluación del Mejor Subconjunto de Características ---")
@@ -284,14 +256,14 @@ if __name__ == "__main__":
     train_file = './UNSW_NB15_training-set.csv' 
     test_file = './UNSW_NB15_testing-set.csv'   
 
-    # Verificar si los archivos existen
+
     import os
     if not os.path.exists(train_file) or not os.path.exists(test_file):
         print(f"ERROR: Archivos de dataset no encontrados en '{train_file}' y '{test_file}'.")
         print("Por favor, descarga los datasets UNSW-NB15 (training-set.csv y testing-set.csv)")
         print("y actualiza las rutas de los archivos en el código.")
     else:
-        # Carga y pre-procesamiento
+
         X_train, X_test, y_train, y_test, original_features, categorical_features = load_and_preprocess_data(train_file, test_file)
 
         total_features_count = X_train.shape[1]
